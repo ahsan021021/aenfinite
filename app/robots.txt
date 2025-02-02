@@ -1,0 +1,10 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /404
+
+# Host
+Host: https://aenfinite.com
+
+# Sitemaps
+Sitemap: https://aenfinite.com/sitemap.xml
