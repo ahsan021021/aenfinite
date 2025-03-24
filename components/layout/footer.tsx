@@ -1,142 +1,144 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { 
-  Github, 
-  Twitter, 
-  Linkedin, 
-  Instagram,
-  ArrowUp,
-  Mail,
-  Phone,
-  MapPin
-} from "lucide-react";
+import { Github, Twitter, Linkedin, Instagram, ArrowUp, Mail, Phone, MapPin } from "lucide-react";
 
 const socialLinks = [
-  { icon: Github, href: "#", label: "GitHub" },
-  { icon: Twitter, href: "#", label: "Twitter" },
-  { icon: Linkedin, href: "#", label: "LinkedIn" },
-  { icon: Instagram, href: "#", label: "Instagram" },
+    { icon: Github, href: "https://github.com/yourprofile", label: "GitHub" },
+    { icon: Twitter, href: "https://twitter.com/yourprofile", label: "Twitter" },
+    { icon: Linkedin, href: "https://www.linkedin.com/company/aenfinite/", label: "LinkedIn" },
+    { icon: Instagram, href: "https://instagram.com/yourprofile", label: "Instagram" },
 ];
 
 export function Footer() {
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
+    const [ref, inView] = useInView({
+        triggerOnce: true,
+        threshold: 0.1,
+    });
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+    const [email, setEmail] = useState("");
+    const [message, setMessage] = useState("");
 
-  return (
-    <footer ref={ref} className="relative bg-gradient-to-b from-gray-900 to-black text-white overflow-hidden">
-      {/* Animated background particles */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTYiIGhlaWdodD0iMjgiIHZpZXdCb3g9IjAgMCA1NiAyOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIyIiBjeT0iMiIgcj0iMiIgZmlsbD0iY3VycmVudENvbG9yIiBmaWxsLW9wYWNpdHk9IjAuMSIvPjwvc3ZnPg==')] opacity-20" />
-      </div>
+    const handleSubmit = async (e: { preventDefault: () => void; }) => {
+        e.preventDefault();
+        setMessage("");
 
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.6 }}
-        className="container mx-auto px-6 py-12 relative z-10"
-      >
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
-          {/* Company Info */}
-          <div className="space-y-4">
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
-              AeFinite
-            </h2>
-            <p className="text-gray-400">
-              Transforming digital experiences through innovative solutions and cutting-edge technology.
-            </p>
-            <div className="flex space-x-4">
-              {socialLinks.map(({ icon: Icon, href, label }) => (
-                <motion.a
-                  key={label}
-                  href={href}
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                  className="text-gray-400 hover:text-white transition-colors"
-                  aria-label={label}
-                >
-                  <Icon className="h-5 w-5" />
-                </motion.a>
-              ))}
-            </div>
-          </div>
+        try {
+            const response = await fetch("/api/subscribe", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email }),
+            });
 
-          {/* Quick Links */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
-            <ul className="space-y-2">
-              {["Home", "Services", "Portfolio", "About Us", "Contact"].map((link) => (
-                <li key={link}>
-                  <a
-                    href="#"
-                    className="text-gray-400 hover:text-white transition-colors hover:underline"
-                  >
-                    {link}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+            const data = await response.json();
+            if (response.ok) {
+                setMessage("Subscription successful! Check your email.");
+                setEmail("");
+            } else {
+                setMessage(data.message || "Subscription failed.");
+            }
+        } catch (error) {
+            setMessage("An error occurred. Please try again.");
+        }
+    };
 
-          {/* Contact Info */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Contact Us</h3>
-            <ul className="space-y-4">
-              <li className="flex items-center space-x-3 text-gray-400">
-                <Mail className="h-5 w-5" />
-                <span>hello@aefinite.com</span>
-              </li>
-              <li className="flex items-center space-x-3 text-gray-400">
-                <Phone className="h-5 w-5" />
-                <span>+1 (555) 123-4567</span>
-              </li>
-              <li className="flex items-center space-x-3 text-gray-400">
-                <MapPin className="h-5 w-5" />
-                <span>123 Innovation St, Tech City</span>
-              </li>
-            </ul>
-          </div>
+    const scrollToTop = () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    };
 
-          {/* Newsletter */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Newsletter</h3>
-            <p className="text-gray-400 mb-4">
-              Stay updated with our latest news and updates.
-            </p>
-            <div className="space-y-2">
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
-              />
-              <Button className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
-                Subscribe
-              </Button>
-            </div>
-          </div>
-        </div>
+    return (
+        <footer ref={ref} className="relative bg-gradient-to-b from-gray-900 to-black text-white overflow-hidden">
+            <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.6 }}
+                className="container mx-auto px-6 py-12 relative z-10"
+            >
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+                    {/* Company Info */}
+                    <div className="space-y-4">
+                        <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+                            AeFinite
+                        </h2>
+                        <p className="text-gray-400">
+                            Transforming digital experiences through innovative solutions and cutting-edge technology.
+                        </p>
+                        <div className="flex space-x-4">
+                            {socialLinks.map(({ icon: Icon, href, label }) => (
+                                <a key={label} href={href} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
+                                    <Icon size={24} />
+                                </a>
+                            ))}
+                        </div>
+                    </div>
 
-        <div className="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-400 text-sm">
-            © {new Date().getFullYear()} AeFinite. All rights reserved.
-          </p>
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            onClick={scrollToTop}
-            className="mt-4 md:mt-0 bg-gray-800 p-2 rounded-full hover:bg-gray-700 transition-colors"
-          >
-            <ArrowUp className="h-5 w-5" />
-          </motion.button>
-        </div>
-      </motion.div>
-    </footer>
-  );
+                    {/* Quick Links */}
+                    <div>
+                        <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
+                        <ul className="space-y-2">
+                            {["Home", "Services", "Portfolio", "About Us", "Contact"].map((link) => (
+                                <li key={link}>
+                                    <a href="#" className="text-gray-400 hover:text-white transition-colors hover:underline">
+                                        {link}
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    {/* Contact Info */}
+                    <div>
+                        <h3 className="text-lg font-semibold mb-4">Contact Us</h3>
+                        <ul className="space-y-2 text-gray-400">
+                            <li className="flex items-center space-x-2">
+                                <Mail size={20} />
+                                <a href="mailto:info@aenfinite.com" className="hover:text-white transition-colors">
+                                    info@aenfinite.com
+                                </a>
+                            </li>
+                            <li className="flex items-center space-x-2">
+                                <Phone size={20} />
+                                <a href="tel:+923179647967" className="hover:text-white transition-colors">
+                                    +923179647967
+                                </a>
+                            </li>
+                            <li className="flex items-center space-x-2">
+                                <MapPin size={20} />
+                                <span>123 Innovation Street, Tech City</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    {/* Newsletter Subscription */}
+                    <div>
+                        <h3 className="text-lg font-semibold mb-4">Stay Updated</h3>
+                        <p className="text-gray-400 mb-4">Subscribe to our newsletter for the latest updates.</p>
+                        <form onSubmit={handleSubmit} className="flex space-x-2">
+                            <Input
+                                type="email"
+                                placeholder="Enter your email"
+                                className="flex-1 text-black"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                            />
+                            <Button type="submit" className="bg-purple-500 hover:bg-purple-600">Subscribe</Button>
+                        </form>
+                        {message && <p className="mt-2 text-sm text-gray-300">{message}</p>}
+                    </div>
+                </div>
+
+                {/* Scroll to Top Button */}
+                <div className="flex justify-center mt-8">
+                    <button onClick={scrollToTop} className="p-2 bg-gray-700 rounded-full hover:bg-gray-600 transition">
+                        <ArrowUp size={24} className="text-white" />
+                    </button>
+                </div>
+            </motion.div>
+        </footer>
+    );
 }

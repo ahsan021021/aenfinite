@@ -32,10 +32,7 @@ export function CalendlyButton() {
         rootElement={rootElement}
         text="Schedule Meeting"
         className="bg-gradient-to-r from-purple-500 to-blue-500 text-white p-4 rounded-full shadow-lg hover:shadow-xl hover:shadow-purple-500/20 transition-all duration-300 flex items-center gap-2"
-      >
-        <Calendar className="h-5 w-5" />
-        <span>Schedule Meeting</span>
-      </PopupButton>
+      />
     </motion.div>
   );
 }
